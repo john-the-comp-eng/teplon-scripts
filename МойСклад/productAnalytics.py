@@ -1,10 +1,12 @@
 from constants import *
-import mysqlConnection
-import moyskladConnection
+from mysqlConnection import mySqlConnection
+from MoySkladEntities.product import Product
 
-dbConnection, dbCursor = mysqlConnection.getConnection()
-attributeArr = mysqlConnection.getEntityAttributes('product', dbCursor)
-skladProduct = moyskladConnection.getProduct('E8403212--', attributeArr)
-savedProduct = mysqlConnection.saveEntity('product', skladProduct, dbCursor, dbConnection, True)
-print("saved product", savedProduct)
-mysqlConnection.closeConnection(dbConnection, dbCursor)
+dbObj = mySqlConnection()
+productObj = Product()
+attributeArr = dbObj.getEntityAttributes('product')
+skladProduct = productObj.get('E8403212--', attributeArr)
+savedProduct = dbObj.saveEntity('product', attributeArr, skladProduct, True)
+if not savedProduct["filterUrl"]:
+    pass
+dbObj.closeConnection()
