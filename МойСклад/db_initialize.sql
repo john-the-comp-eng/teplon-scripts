@@ -2,13 +2,14 @@
 
 create table product
 (
-    id           char(50) not null,
-    article      char(50) not null,
-    name         text     not null,
-    externalCode char(50) not null,
-    minimumStock int      null,
-    lastSyncDate datetime null,
-    filterUrl    text     null,
+    id              char(50) not null,
+    article         char(50) not null,
+    name            text     not null,
+    externalCode    char(50) not null,
+    minimumStock    int      null,
+    lastSyncDate    datetime null,
+    supplyFilterUrl text     null,
+    demandFilterUrl text     null,
     constraint product_pk
         unique (id),
     constraint product_pk_2
@@ -17,5 +18,13 @@ create table product
         unique (externalCode)
 );
 
-
-
+create table event
+(
+    eventType char(50) null,
+    product   char(50) null,
+    stock     int      null,
+    quantity  int      null,
+    eventDate int      null,
+    constraint event_product_id_fk
+        foreign key (product) references product (id)
+);

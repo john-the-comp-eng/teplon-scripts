@@ -47,6 +47,10 @@ class mySqlConnection:
         return attributeArr
 
     def saveEntity(self, entity, attributeArr, dictionary, log=False):
+        for key in list(dictionary.keys()):
+            if not dictionary[key]:
+                dictionary.pop(key)
+        
         id = dictionary["id"]
         insertAttributes = ','.join(dictionary.keys())
         queryAttributes = ','.join(attributeArr)
