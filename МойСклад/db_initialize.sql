@@ -32,3 +32,10 @@ create table event
     constraint event_product_id_fk
         foreign key (product) references product (id)
 );
+
+create index event_eventType_index
+    on event (eventType);
+
+create index event_name_index
+    on event (name);
+

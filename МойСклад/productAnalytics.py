@@ -31,11 +31,35 @@ def saveEvents(dbObj: mySqlConnection, product):
     attributes = dbObj.getEntityAttributes('event')
     skladEvents = skladEvents + eventController.get(attributes)
     dbObj.saveEntities("event", attributes, skladEvents, True)
+    id=product['id']
+    return dbObj.getEntries("event", attributes, f"product='{id}' ORDER BY moment DESC")
+    
+def calculateHistoricStock(dbObj: mySqlConnection, product, events, log=False):
+    attributes = dbObj.getEntityAttributes('event')
+    productController = Product()
+    stock = productController.getStock(product['article'], log)
+    stockDelta = None
+    for i in range(len(events)):
+        if not stockDelta:
+            stockDelta = 0
+        else:
+            stock += stockDelta
+        events[i]['stock'] = stock if stock else '0'
+
+        match events[i]['eventType']:
+            case "demand":
+                stockDelta = events[i]['quantity']
+            case "supply":
+                stockDelta = -events[i]['quantity']
+            case _:
+                raise Exception("invalid product event type provided for event " + events[i]['id'])
+    dbObj.saveEntities("event", attributes, events)
 
 dbObj = mySqlConnection()
 # article = 'E8403212--'
 article = '065150'
 product = saveProduct(dbObj, article)
 events = saveEvents(dbObj, product)
+calculateHistoricStock(dbObj, product, events)
 
 dbObj.closeConnection()

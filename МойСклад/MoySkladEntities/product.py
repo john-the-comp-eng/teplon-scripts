@@ -67,3 +67,21 @@ class Product(moySkaldConnection):
                 return filter['meta']['href']
 
         return None
+    
+    def getStock(self, article, log=False):
+        dateNow = datetime.datetime.now()
+        dateNow = dateNow.strftime(DATE_TIME_FORMAT)
+        stockUrl = f"https://api.moysklad.ru/api/remap/1.2/entity/assortment?filter=article~{article};stockMoment={dateNow}"
+        payload = {}
+        headers = {
+            'Authorization': self.getBasicAuth()
+        }
+
+        response = requests.request("GET", stockUrl, headers=headers, data=payload)
+        resonseJson = response.json()
+
+        if log:
+            print(stockUrl)
+            print(article, "stock left: ", resonseJson['rows'][0]['stock'])
+            
+        return resonseJson['rows'][0]['stock']

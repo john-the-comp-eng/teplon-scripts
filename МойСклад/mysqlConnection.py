@@ -118,3 +118,23 @@ class mySqlConnection:
             self.cursor.execute(query)
         else:
             return query
+        
+    def getEntries(self, entity, attributes, condition="TRUE", log=False):
+        queryAttributes = ','.join(attributes)
+        query = f"""
+                    SELECT {queryAttributes} FROM {entity} WHERE {condition};
+                """
+        if log:
+            print(query)
+
+        entries = []
+        self.cursor.execute(query)
+        results = self.cursor.fetchall()
+        for result in results:
+            entries.append(self.buildDictionaryFromData(attributes, result))
+        
+        if log:
+            print(results)
+
+        return entries
+        
