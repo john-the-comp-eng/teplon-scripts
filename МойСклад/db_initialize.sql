@@ -25,7 +25,8 @@ create table event
     product   char(50) null,
     stock     int      null,
     quantity  int      null,
-    eventDate int      null,
+    moment    datetime null,
+    name      char(50) null,
     constraint event_pk
         unique (id),
     constraint event_product_id_fk

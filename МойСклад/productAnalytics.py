@@ -30,6 +30,7 @@ def saveEvents(dbObj: mySqlConnection, product):
     eventController = Event("supply", product)
     attributes = dbObj.getEntityAttributes('event')
     skladEvents = skladEvents + eventController.get(attributes)
+    dbObj.saveEntities("event", attributes, skladEvents, True)
 
 dbObj = mySqlConnection()
 # article = 'E8403212--'

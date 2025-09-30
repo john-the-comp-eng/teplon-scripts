@@ -41,19 +41,19 @@ class mySqlConnection:
     def getEntityAttributes(self, entity):
         self.cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'teplon' AND TABLE_NAME = '{entity}'")
         resultArr = self.cursor.fetchall()
-        attributeArr = []
+        attributes = []
         for resultLine in resultArr:
-            attributeArr.append(resultLine[0])
-        return attributeArr
+            attributes.append(resultLine[0])
+        return attributes
 
-    def saveEntity(self, entity, attributeArr, dictionary, log=False):
+    def saveEntity(self, entity, attributes, dictionary, execute=True, log=False):
         for key in list(dictionary.keys()):
             if not dictionary[key]:
                 dictionary.pop(key)
         
         id = dictionary["id"]
         insertAttributes = ','.join(dictionary.keys())
-        queryAttributes = ','.join(attributeArr)
+        queryAttributes = ','.join(attributes)
         attributeValues = ','.join(list(map(lambda val: "'" + str(val) + "'", dictionary.values())))
         updateSql = self.updateEntity(entity, dictionary, False)
         query = f"""
@@ -62,7 +62,9 @@ class mySqlConnection:
                     {updateSql};
                     SELECT {queryAttributes} FROM {entity} WHERE id = '{id}';
                 """
-        
+        if not execute:
+            return query
+
         if log:
             print(query)
 
@@ -73,12 +75,33 @@ class mySqlConnection:
             while cursor.nextset():
                 result = cursor.fetchall()
                 if len(result):
-                    results.append(self.buildDictionaryFromData(attributeArr, result[0]))
+                    results.append(self.buildDictionaryFromData(attributes, result[0]))
 
+        if log:
+            print(results)
         if len(results) != 1:
             raise Exception("Save entity query by id returned more than one result")
         else:
             return results[0]
+        
+    def saveEntities(self, entity, attributes, dicitonaries, log=False):
+        query = ""
+        for dictionary in dicitonaries:
+            query += self.saveEntity(entity, attributes, dictionary, False, False)
+        
+        if log:
+            print(query)
+        
+        results = []
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+            while cursor.nextset():
+                result = cursor.fetchall()
+                if len(result):
+                    results.append(self.buildDictionaryFromData(attributes, result[0]))
+        if log:
+            print(results)
 
     def updateEntity(self, entity, dictionary, execute=True, log=False):
         id = dictionary["id"]
