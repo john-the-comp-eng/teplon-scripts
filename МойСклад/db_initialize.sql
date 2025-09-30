@@ -20,11 +20,14 @@ create table product
 
 create table event
 (
+    id        char(50) null,
     eventType char(50) null,
     product   char(50) null,
     stock     int      null,
     quantity  int      null,
     eventDate int      null,
+    constraint event_pk
+        unique (id),
     constraint event_product_id_fk
         foreign key (product) references product (id)
 );

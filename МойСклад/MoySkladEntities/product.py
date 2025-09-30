@@ -21,9 +21,9 @@ class Product(moySkaldConnection):
             print('More than one product found')
             return {}
         else:
-            return self.buildProduct(resonseJson['rows'][0], attributes)
+            return self.build(resonseJson['rows'][0], attributes)
 
-    def buildProduct(self, receivedProduct, expectedAttributes):
+    def build(self, receivedProduct, expectedAttributes):
         newProduct = {}
         for attribute in expectedAttributes:
             match attribute:
@@ -32,8 +32,7 @@ class Product(moySkaldConnection):
                 case "supplyFilterUrl":
                     pass
                 case "lastSyncDate":
-                    x = datetime.datetime.now()
-                    newProduct[attribute] = x.strftime(DATE_TIME_FORMAT)
+                    pass
                 case "minimumStock":
                     newProduct[attribute] = receivedProduct[attribute]["quantity"]
                 case _:
