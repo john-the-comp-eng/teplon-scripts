@@ -4,9 +4,9 @@ class mySqlConnection:
     def __init__(self):
         try:
             self.connection = mysql.connector.connect(
-                host="localhost",
+                host="35.228.178.34",
                 user="root",  # Replace with your MySQL username
-                password="secret",  # Replace with your MySQL password
+                password="2>\jjC[pV:ir<{O2",  # Replace with your MySQL password
                 database="teplon"  # Replace with your database name
             )
             self.connection.autocommit = True

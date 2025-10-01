@@ -16,7 +16,7 @@ class Event(moySkaldConnection):
         if self.product[filterAttribute]:
             filter = "namedfilter=" + self.product[filterAttribute]
         if len(filter) == 0:
-            raise Exception("Cannot retrieve event without a filter")
+            raise Exception("Cannot retrieve event without a filter for article " + self.product['article'])
         eventUrl = f"https://api.moysklad.ru/api/remap/1.2/entity/{self.eventType}?expand=positions.assortment&{filter}"
 
         payload = {}
@@ -30,11 +30,10 @@ class Event(moySkaldConnection):
             urlWithLimit = eventUrl + f"&offset={offset}&limit={self.limit}"
             response = requests.request("GET", urlWithLimit, headers=headers, data=payload)
             resonseJson = response.json()
-            print(self.eventType, resonseJson)
 
             if not len(resonseJson['rows']):
-                print(f"No {self.eventType} events found")
-                return None if len(events) == 0 else events
+                print(f"No {self.eventType} events found at offset: {offset} limit: {self.limit}")
+                return []
             
             for skladEvent in resonseJson['rows']:
                 for soldProduct in skladEvent['positions']['rows']:

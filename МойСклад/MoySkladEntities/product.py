@@ -34,7 +34,8 @@ class Product(moySkaldConnection):
                 case "lastSyncDate":
                     pass
                 case "minimumStock":
-                    newProduct[attribute] = receivedProduct[attribute]["quantity"]
+                    pass
+                    # newProduct[attribute] = receivedProduct[attribute]["quantity"] if receivedProduct[attribute]["quantity"] else 0
                 case _:
                     newProduct[attribute] = receivedProduct[attribute]
         return newProduct
@@ -83,5 +84,5 @@ class Product(moySkaldConnection):
         if log:
             print(stockUrl)
             print(article, "stock left: ", resonseJson['rows'][0]['stock'])
-            
+
         return resonseJson['rows'][0]['stock']

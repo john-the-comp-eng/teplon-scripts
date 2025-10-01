@@ -30,7 +30,8 @@ def saveEvents(dbObj: mySqlConnection, product):
     eventController = Event("supply", product)
     attributes = dbObj.getEntityAttributes('event')
     skladEvents = skladEvents + eventController.get(attributes)
-    dbObj.saveEntities("event", attributes, skladEvents, True)
+    if len(skladEvents):
+        dbObj.saveEntities("event", attributes, skladEvents)
     id=product['id']
     return dbObj.getEntries("event", attributes, f"product='{id}' ORDER BY moment DESC")
     
@@ -56,10 +57,25 @@ def calculateHistoricStock(dbObj: mySqlConnection, product, events, log=False):
     dbObj.saveEntities("event", attributes, events)
 
 dbObj = mySqlConnection()
-# article = 'E8403212--'
-article = '065150'
-product = saveProduct(dbObj, article)
-events = saveEvents(dbObj, product)
-calculateHistoricStock(dbObj, product, events)
+# BAXI
+done = [
+    'E8403212--', 'E8403214--', 'E8403218--', 'E8403224--', 'E8403230--', 'E8403236--', 'E8403206--', 'E8403209--', 'E8403312--', 'E8403314--', 'E8403318--', 'E8403324--', 
+]
+articles = [
+    'E8403330--', 'E8403336--', 'E8403345--', 'E8403309--', 
+    'A7114602', 'A7114600', 'A7114601', 'A7689653', 'A7689652', 'A7689651', 'A7689649', 'A7722037', 'A7722038', 'A7722039', 'A7810405', 'A7720022', 'A7720023', 'A7720024', 'A7720025', 'A7720026', 'A7720027', 'A7720028', 'A7810404', 'A7785873', 'A7810446', 
+    '7612420', '7612419', '7612418', '7612421', '7659668--', '7659666--', '7659669--', '7659762--', '7659670--', '7860077', '7814105', '7814108', '7814104', '7813724', '7869249', '7869251', '7869250', '7869252', '7221296', '7671757--', '7685036--', '7106815--', '7104050--', '7104051--', '7104052--', '7221295', '7219688--', '7219689--', '7219690--', '7219691--', '7219692--', '7219693--', '7219553--', '7219554--', '7219555--', 
+    'CSE46114354-', 'CSE46514354-', 'CSE46124354-', 'CSE46524354-', 'CSE46224354-', 'CSE46624354-', 'CSE45624366-', 'CSE45224366-', 'CSE45628366-', 'CSE45631366-', 'CSE45624358-', 'CSE45224358-', 'CSE45631358-', 'CSB45724358-', 'CSB45424358-', 'CSB45728358-', 'CSB45428358-', 'CSB45732358-',
+    '100021538', '100022963', '100023035', '100021539', '100021540', '100021428', '100022347',
+    'WHS43110060-', 'WHS43112060-', 'WHS43115060-', 'WHS43104560-', 'WHS43106560-', 'WHS43108560-', 
+    'WSB43430301-', 'WSB43115301-', 'WSB43523301-', 'WSB43523347-', 'WSB43123301-', 'WSB43123347-', 'WSB43530301-', 'WSB43530347-', 'WSB43130301-', 'WSB43130347-', 'WSB43140347-', 'WSB43149347-', 'WSB43162347-', 'WSB43423301-', 'WSB43730301-', 
+]
+# article = '065150'
+for article in articles:
+    product = saveProduct(dbObj, article)
+    events = saveEvents(dbObj, product)
+    if len(events):
+        calculateHistoricStock(dbObj, product, events)
+    print(f"Article {article} processed")
 
 dbObj.closeConnection()
