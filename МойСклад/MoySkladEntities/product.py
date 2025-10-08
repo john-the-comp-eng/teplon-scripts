@@ -36,6 +36,9 @@ class Product(moySkaldConnection):
                 case "minimumStock":
                     pass
                     # newProduct[attribute] = receivedProduct[attribute]["quantity"] if receivedProduct[attribute]["quantity"] else 0
+                case "points":
+                    newProduct[attribute] = self.getPoints(receivedProduct['id'])
+                    pass
                 case _:
                     newProduct[attribute] = receivedProduct[attribute]
         return newProduct
@@ -86,3 +89,25 @@ class Product(moySkaldConnection):
             print(article, "stock left: ", resonseJson['rows'][0]['stock'])
 
         return resonseJson['rows'][0]['stock']
+    
+    def getPoints(self, productId, log=False):
+        dateNow = datetime.datetime.now()
+        dateYearAgo = str(int(dateNow.strftime(YEAR_FORMAT))-1) + "-" + dateNow.strftime(MONTH_FORMAT + "-" + DAY_FORMAT)
+        dateNow = dateNow.strftime(DATE_FORMAT)
+        profitUrl = f"https://api.moysklad.ru/api/remap/1.2/report/profit/byproduct?filter=product=https://api.moysklad.ru/api/remap/1.2/entity/product/{productId}&&momentFrom={dateYearAgo}&momentTo={dateNow}"
+
+        payload = {}
+        headers = {
+            'Authorization': self.getBasicAuth()
+        }
+        response = requests.request("GET", profitUrl, headers=headers, data=payload)
+        responseJson = response.json()
+
+        if log:
+            print(profitUrl)
+            print(productId, "profit json: ", responseJson)
+
+        if len(responseJson['rows']) == 0:
+            return 0
+        return responseJson['rows'][0]['margin']*10
+

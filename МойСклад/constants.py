@@ -1,1 +1,5 @@
 DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+DATE_FORMAT = '%Y-%m-%d'
+YEAR_FORMAT = '%Y'
+MONTH_FORMAT = '%m'
+DAY_FORMAT = '%d'

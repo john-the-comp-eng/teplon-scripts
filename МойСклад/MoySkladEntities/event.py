@@ -33,7 +33,7 @@ class Event(moySkaldConnection):
 
             if not len(resonseJson['rows']):
                 print(f"No {self.eventType} events found at offset: {offset} limit: {self.limit}")
-                return []
+                return events
             
             for skladEvent in resonseJson['rows']:
                 for soldProduct in skladEvent['positions']['rows']:
