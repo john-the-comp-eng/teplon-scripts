@@ -43,7 +43,10 @@ class Event(moySkaldConnection):
             offset += self.limit
 
     def build(self, receivedEvent, expectedAttributes):
-        newEvent = {}
+        newEvent = {
+            "quantity": 0,
+            "amount": 0
+        }
         for attribute in expectedAttributes:
             match attribute:
                 case "eventType":
@@ -55,12 +58,16 @@ class Event(moySkaldConnection):
                 case "stock":
                     pass
                 case "quantity":
-                    newEvent[attribute] = 0
                     for soldProduct in receivedEvent['positions']['rows']:
                         if soldProduct['assortment']['id'] == self.product['id']:
-                            newEvent[attribute] += soldProduct[attribute]
+                            quantity = soldProduct[attribute]
+                            newEvent[attribute] += quantity
+                            if (newEvent['eventType'] == 'demand'):
+                                newEvent['amount'] += soldProduct['price'] * quantity
                             # 00114 supply is a test to make sure we count the quantity correctly
                     pass
+                case "amount":
+                    pass # handled in quantity case
                 case _:
                     newEvent[attribute] = receivedEvent[attribute]
         return newEvent
