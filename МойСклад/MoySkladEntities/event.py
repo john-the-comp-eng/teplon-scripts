@@ -62,8 +62,8 @@ class Event(moySkaldConnection):
                         if soldProduct['assortment']['id'] == self.product['id']:
                             quantity = soldProduct[attribute]
                             newEvent[attribute] += quantity
-                            if (newEvent['eventType'] == 'demand'):
-                                newEvent['amount'] += soldProduct['price'] * quantity
+                            if (self.eventType == 'demand'):
+                                newEvent['amount'] += (soldProduct['price']/100) * quantity
                             # 00114 supply is a test to make sure we count the quantity correctly
                     pass
                 case "amount":

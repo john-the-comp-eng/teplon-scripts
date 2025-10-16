@@ -33,9 +33,22 @@ class Product(moySkaldConnection):
                     pass
                 case "lastSyncDate":
                     pass
-                case "minimumStock":
+                case "RAT":
                     pass
-                    # newProduct[attribute] = receivedProduct[attribute]["quantity"] if receivedProduct[attribute]["quantity"] else 0
+                case "R12M":
+                    pass
+                case "R6M":
+                    pass
+                case "R3M":
+                    pass
+                case "minimumStock":
+                    # print('receivedProduct', receivedProduct)
+                    if "minimumStock" in receivedProduct.values():
+                        print('got here')
+                        newProduct[attribute] = receivedProduct[attribute]["quantity"]
+                    else:
+                        newProduct[attribute] = 0
+                    pass
                 case "points":
                     newProduct[attribute] = self.getPoints(receivedProduct['id'])
                     pass
