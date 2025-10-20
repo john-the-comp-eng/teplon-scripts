@@ -11,6 +11,11 @@ create table product
     supplyFilterUrl text           null,
     demandFilterUrl text           null,
     points          decimal(10, 4) null,
+    tgChatMentions  int            null,
+    RAT             char(10)       null,
+    R12M            char(10)       null,
+    R6M             char(10)       null,
+    R3M             char(10)       null,
     constraint product_pk
         unique (id),
     constraint product_pk_2

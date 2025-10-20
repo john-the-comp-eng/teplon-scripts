@@ -55,11 +55,11 @@ class mySqlConnection:
         insertAttributes = ','.join(dictionary.keys())
         queryAttributes = ','.join(attributes)
         attributeValues = ','.join(list(map(lambda val: "'" + str(val) + "'", dictionary.values())))
-        updateSql = self.updateEntity(entity, dictionary, False)
+        updateSql = self.updateEntity(entity, "id", dictionary, False)
         query = f"""
                     INSERT INTO {entity} ({insertAttributes})
                     VALUES ({attributeValues}) ON DUPLICATE KEY UPDATE id = id;
-                    {updateSql};
+                    {updateSql}
                     SELECT {queryAttributes} FROM {entity} WHERE id = '{id}';
                 """
         if not execute:
@@ -103,13 +103,13 @@ class mySqlConnection:
         if log:
             print(results)
 
-    def updateEntity(self, entity, dictionary, execute=True, log=False):
-        id = dictionary["id"]
-        dictionary.pop("id")
+    def updateEntity(self, entity, primaryKey, dictionary, execute=True, log=False):
+        primaryKeyValue = dictionary[primaryKey]
+        dictionary.pop(primaryKey)
 
         settingValues = ",".join(map(lambda attr: attr+"='"+str(dictionary[attr])+"'", dictionary))
         query = f"""
-                    UPDATE {entity} SET {settingValues} WHERE id = '{id}'
+                    UPDATE {entity} SET {settingValues} WHERE {primaryKey} = '{primaryKeyValue}';
                 """
         if log:
             print(query)

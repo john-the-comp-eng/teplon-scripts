@@ -15,11 +15,9 @@ class Product(moySkaldConnection):
         response = requests.request("GET", productUrl, headers=headers, data=payload)
         resonseJson = response.json()
         if not len(resonseJson['rows']):
-            print("No products found")
-            return {}
+            raise Exception(f"No products found for article {article}")
         elif len(resonseJson['rows']) > 1:
-            print('More than one product found')
-            return {}
+            raise Exception(f"More than one product found: {article}")
         else:
             return self.build(resonseJson['rows'][0], attributes)
 
@@ -32,6 +30,8 @@ class Product(moySkaldConnection):
                 case "supplyFilterUrl":
                     pass
                 case "lastSyncDate":
+                    pass
+                case "tgChatMentions":
                     pass
                 case "RAT":
                     pass
