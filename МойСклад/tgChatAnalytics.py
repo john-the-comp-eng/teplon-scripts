@@ -9,7 +9,7 @@ for fileNumber in range(1, files):
             content = file.read()
             words = content.split(' ')
 
-            for prothermArticle in PROTHERM_PARTS_ARTICLES:
+            for prothermArticle in VAILLANT_PARTS_ARTICLES:
                 if prothermArticle not in articlesFound.keys():
                     articlesFound[prothermArticle] = 0
                 for word in words:

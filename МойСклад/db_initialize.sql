@@ -3,6 +3,7 @@
 create table product
 (
     id              char(50)       not null,
+    brand           char(50)       null,
     article         char(50)       not null,
     name            text           not null,
     externalCode    char(50)       not null,

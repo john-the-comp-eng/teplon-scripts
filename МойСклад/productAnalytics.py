@@ -58,7 +58,7 @@ def calculateHistoricStock(dbObj: mySqlConnection, product, events, log=False):
 
 dbObj = mySqlConnection()
 
-articles = PROTHERM_PARTS_ARTICLES
+articles = VAILLANT_PARTS_ARTICLES
 
 for article in articles:
     product = saveProduct(dbObj, article)

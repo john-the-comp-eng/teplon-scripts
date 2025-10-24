@@ -41,6 +41,15 @@ class Product(moySkaldConnection):
                     pass
                 case "R3M":
                     pass
+                case "category":
+                    pathArray = receivedProduct['pathName'].split('/')
+                    newProduct["category"] = pathArray[0] + "/" + pathArray[1]
+                    pass
+                case "brand":
+                    for attributeInfo in receivedProduct['attributes']:
+                        if attributeInfo['id'] == BRAND_FIELD_ID:
+                            newProduct['brand'] = attributeInfo['value']
+                    pass
                 case "minimumStock":
                     # print('receivedProduct', receivedProduct)
                     if "minimumStock" in receivedProduct.values():
