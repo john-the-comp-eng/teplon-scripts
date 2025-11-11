@@ -48,7 +48,7 @@ class mySqlConnection:
 
     def saveEntity(self, entity, attributes, dictionary, execute=True, log=False):
         for key in list(dictionary.keys()):
-            if not dictionary[key]:
+            if dictionary[key] is None:
                 dictionary.pop(key)
         
         id = dictionary["id"]

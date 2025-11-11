@@ -8,7 +8,8 @@ create table product
     name            text           not null,
     externalCode    char(50)       not null,
     minimumStock    int            null,
-    lastSyncDate    datetime       null,
+    RiskStock       int            null,
+    lastCheckDate   datetime       null,
     supplyFilterUrl text           null,
     demandFilterUrl text           null,
     points          decimal(10, 4) null,
@@ -17,6 +18,9 @@ create table product
     R12M            char(10)       null,
     R6M             char(10)       null,
     R3M             char(10)       null,
+    category        char(50)       null,
+    cost            double         null,
+    stock           int            null,
     constraint product_pk
         unique (id),
     constraint product_pk_2

@@ -29,7 +29,7 @@ class Product(moySkaldConnection):
                     pass
                 case "supplyFilterUrl":
                     pass
-                case "lastSyncDate":
+                case "lastCheckDate":
                     pass
                 case "tgChatMentions":
                     pass
@@ -41,6 +41,8 @@ class Product(moySkaldConnection):
                     pass
                 case "R3M":
                     pass
+                case "RiskStock":
+                    pass
                 case "category":
                     pathArray = receivedProduct['pathName'].split('/')
                     newProduct["category"] = pathArray[0] + "/" + pathArray[1]
@@ -51,12 +53,10 @@ class Product(moySkaldConnection):
                             newProduct['brand'] = attributeInfo['value']
                     pass
                 case "minimumStock":
-                    # print('receivedProduct', receivedProduct)
-                    if "minimumStock" in receivedProduct.values():
-                        print('got here')
+                    if "minimumStock" in receivedProduct.keys():
                         newProduct[attribute] = receivedProduct[attribute]["quantity"]
                     else:
-                        newProduct[attribute] = 0
+                        newProduct[attribute] = '0'
                     pass
                 case "points":
                     newProduct[attribute] = self.getPoints(receivedProduct['id'])
