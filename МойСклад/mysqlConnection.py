@@ -51,17 +51,25 @@ class mySqlConnection:
             if dictionary[key] is None:
                 dictionary.pop(key)
         
-        id = dictionary["id"]
         insertAttributes = ','.join(dictionary.keys())
         queryAttributes = ','.join(attributes)
         attributeValues = ','.join(list(map(lambda val: "'" + str(val) + "'", dictionary.values())))
-        updateSql = self.updateEntity(entity, "id", dictionary, False)
-        query = f"""
-                    INSERT INTO {entity} ({insertAttributes})
-                    VALUES ({attributeValues}) ON DUPLICATE KEY UPDATE id = id;
-                    {updateSql}
-                    SELECT {queryAttributes} FROM {entity} WHERE id = '{id}';
-                """
+        withId = "id" in dictionary.keys()
+
+        if withId:
+            id = dictionary["id"]
+            updateSql = self.updateEntity(entity, "id", dictionary, False)
+            query = f"""
+                        INSERT INTO {entity} ({insertAttributes})
+                        VALUES ({attributeValues}) ON DUPLICATE KEY UPDATE id = id;
+                        {updateSql}
+                        SELECT {queryAttributes} FROM {entity} WHERE id = '{id}';
+                    """
+        else:
+            query = f"""
+                        INSERT INTO {entity} ({insertAttributes})
+                        VALUES ({attributeValues});
+                    """
         if not execute:
             return query
 
@@ -71,6 +79,8 @@ class mySqlConnection:
         results = []
         with self.connection.cursor() as cursor:
             cursor.execute(query)
+            if not withId:
+                return results
             result = cursor.fetchall()
             while cursor.nextset():
                 result = cursor.fetchall()

@@ -8,7 +8,7 @@ create table product
     name            text           not null,
     externalCode    char(50)       not null,
     minimumStock    int            null,
-    RiskStock       int            null,
+    riskStock       int            null,
     lastCheckDate   datetime       null,
     supplyFilterUrl text           null,
     demandFilterUrl text           null,
@@ -51,3 +51,14 @@ create index event_eventType_index
 create index event_name_index
     on event (name);
 
+create table financials
+(
+    primeStockValue       double    null,
+    riskStockValue        double    null,
+    extraStockValue       double    null,
+    moment                datetime  not null,
+    brand                 char(50)  not null,
+    category              char(250) not null,
+    targetPrimeStockValue double    null,
+    targetRiskStockValue  double    null
+);

@@ -41,7 +41,7 @@ class Product(moySkaldConnection):
                     pass
                 case "R3M":
                     pass
-                case "RiskStock":
+                case "riskStock":
                     pass
                 case "category":
                     pathArray = receivedProduct['pathName'].split('/')
@@ -58,8 +58,22 @@ class Product(moySkaldConnection):
                     else:
                         newProduct[attribute] = '0'
                     pass
+                case "stock":
+                    newProduct["stock"] = self.getStock(receivedProduct['article'])
+                    pass
+                case "cost":
+                    dateNow = datetime.datetime.now()
+                    dateFrom = str(int(dateNow.strftime(YEAR_FORMAT))-5) + "-" + dateNow.strftime(MONTH_FORMAT + "-" + DAY_FORMAT)
+                    dateTo = dateNow.strftime(DATE_FORMAT)
+                    x, cost = self.getPoints(receivedProduct['id'], dateFrom, dateTo)
+                    if cost > 0:
+                        newProduct["cost"] = cost
+                    pass
                 case "points":
-                    newProduct[attribute] = self.getPoints(receivedProduct['id'])
+                    dateNow = datetime.datetime.now()
+                    dateFrom = str(int(dateNow.strftime(YEAR_FORMAT))-1) + "-" + dateNow.strftime(MONTH_FORMAT + "-" + DAY_FORMAT)
+                    dateTo = dateNow.strftime(DATE_FORMAT)
+                    newProduct["points"], x = self.getPoints(receivedProduct['id'], dateFrom, dateTo)
                     pass
                 case _:
                     newProduct[attribute] = receivedProduct[attribute]
@@ -112,11 +126,8 @@ class Product(moySkaldConnection):
 
         return resonseJson['rows'][0]['stock']
     
-    def getPoints(self, productId, log=False):
-        dateNow = datetime.datetime.now()
-        dateYearAgo = str(int(dateNow.strftime(YEAR_FORMAT))-1) + "-" + dateNow.strftime(MONTH_FORMAT + "-" + DAY_FORMAT)
-        dateNow = dateNow.strftime(DATE_FORMAT)
-        profitUrl = f"https://api.moysklad.ru/api/remap/1.2/report/profit/byproduct?filter=product=https://api.moysklad.ru/api/remap/1.2/entity/product/{productId}&&momentFrom={dateYearAgo}&momentTo={dateNow}"
+    def getPoints(self, productId, dateFrom, dateTo, log=False):
+        profitUrl = f"https://api.moysklad.ru/api/remap/1.2/report/profit/byproduct?filter=product=https://api.moysklad.ru/api/remap/1.2/entity/product/{productId}&&momentFrom={dateFrom}&momentTo={dateTo}"
 
         payload = {}
         headers = {
@@ -130,6 +141,6 @@ class Product(moySkaldConnection):
             print(productId, "profit json: ", responseJson)
 
         if len(responseJson['rows']) == 0:
-            return 0
-        return responseJson['rows'][0]['margin']*10
+            return 0, 0
+        return responseJson['rows'][0]['margin']*10, round(responseJson['rows'][0]['sellCost']/100, 2)
 

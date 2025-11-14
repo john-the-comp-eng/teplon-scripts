@@ -37,8 +37,7 @@ def saveEvents(dbObj: mySqlConnection, product):
     
 def calculateHistoricStock(dbObj: mySqlConnection, product, events, log=False):
     attributes = dbObj.getEntityAttributes('event')
-    productController = Product()
-    stock = productController.getStock(product['article'], log)
+    stock = product["stock"]
     stockDelta = None
     for i in range(len(events)):
         if not stockDelta:
@@ -58,7 +57,7 @@ def calculateHistoricStock(dbObj: mySqlConnection, product, events, log=False):
 
 dbObj = mySqlConnection()
 
-articles = VAILLANT_PARTS_ARTICLES
+articles = ['0020092371']
 
 for article in articles:
     product = saveProduct(dbObj, article)
