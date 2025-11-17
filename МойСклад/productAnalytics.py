@@ -56,8 +56,10 @@ def calculateHistoricStock(dbObj: mySqlConnection, product, events, log=False):
     dbObj.saveEntities("event", attributes, events)
 
 dbObj = mySqlConnection()
+productController = Product()
 
-articles = ['0020092371']
+articles = productController.getArticlesByFilterName(VAILLANT_PARTS_FILTER_ID)
+print(articles)
 
 for article in articles:
     product = saveProduct(dbObj, article)

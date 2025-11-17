@@ -4,6 +4,10 @@ import datetime
 from moyskladConnection import moySkaldConnection
 
 class Product(moySkaldConnection):
+    def __init__(self):
+        self.limit = 1000
+        super().__init__()
+
     def get(self, article, attributes):
         productUrl  = f'https://api.moysklad.ru/api/remap/1.2/entity/product?filter=article={article}&fields=minimumStock'
 
@@ -20,6 +24,32 @@ class Product(moySkaldConnection):
             raise Exception(f"More than one product found: {article}")
         else:
             return self.build(resonseJson['rows'][0], attributes)
+        
+    def getArticlesByFilterName(self, filterId):
+        productUrl  = f'https://api.moysklad.ru/api/remap/1.2/entity/product?namedfilter=https://api.moysklad.ru/api/remap/1.2/entity/product/namedfilter/{filterId}'
+
+        payload = {}
+        headers = {
+            'Authorization': self.getBasicAuth()
+        }
+        articles = []
+        offset = 0
+        while True:
+            urlWithLimit = productUrl + f"&offset={offset}&limit={self.limit}"
+            response = requests.request("GET", urlWithLimit, headers=headers, data=payload)
+            resonseJson = response.json()
+
+            if not len(resonseJson['rows']):
+                print(f"No products found at offset for filter {filterId}: {offset} limit: {self.limit}")
+                return articles
+            
+            for product in resonseJson['rows']:
+                if "article" not in product.keys():
+                    print("No article found for: " + product['name'])
+                    continue
+                articles.append(product['article'])
+            
+            offset += self.limit
 
     def build(self, receivedProduct, expectedAttributes):
         newProduct = {}
