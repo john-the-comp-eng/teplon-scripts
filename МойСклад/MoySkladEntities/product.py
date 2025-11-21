@@ -19,9 +19,11 @@ class Product(moySkaldConnection):
         response = requests.request("GET", productUrl, headers=headers, data=payload)
         resonseJson = response.json()
         if not len(resonseJson['rows']):
-            raise Exception(f"No products found for article {article}")
+            print(f"Error 0000002: No products found for article {article}")
+            return None
         elif len(resonseJson['rows']) > 1:
-            raise Exception(f"More than one product found: {article}")
+            print(f"Error 0000003: More than one product found: {article}")
+            return None
         else:
             return self.build(resonseJson['rows'][0], attributes)
         

@@ -7,6 +7,8 @@ def saveProduct(dbObj: mySqlConnection, article):
     productController = Product()
     attributeArr = dbObj.getEntityAttributes('product')
     skladProduct = productController.get(article, attributeArr)
+    if skladProduct is None:
+        return None
     savedProduct = dbObj.saveEntity('product', attributeArr, skladProduct)
     saveFilters = False
     if not savedProduct["demandFilterUrl"]:
@@ -59,14 +61,19 @@ dbObj = mySqlConnection()
 productController = Product()
 
 articles = productController.getArticlesByFilterName(VAILLANT_PARTS_FILTER_ID)
-print(articles)
 
+count = 1
 for article in articles:
     product = saveProduct(dbObj, article)
+    if product is None:
+        print(f"Cannot process article {article}: {count}")
+        count += 1
+        continue
     events = []
     events = saveEvents(dbObj, product)
     if len(events):
         calculateHistoricStock(dbObj, product, events)
-    print(f"Article {article} processed")
+    print(f"Article {article} processed: {count}")
+    count += 1
 
 dbObj.closeConnection()

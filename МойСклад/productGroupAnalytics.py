@@ -37,6 +37,8 @@ for i in range(len(products)):
         raise Exception("Product " + product['article'] + " has no cost populated")
     print("product", product['article'])
     riskStock = (0 if product['riskStock'] is None else product['riskStock'])
+    if  product['R3M'] is None:
+        continue
     if "A" in product['R3M']:
         financials['targetPrimeStockValue'] += (product['minimumStock'] - riskStock)*product['cost']
         financials['targetRiskStockValue'] += riskStock*product['cost']
